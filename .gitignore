@@ -18,3 +18,7 @@ test/version_tmp
 tmp
 *.swp
 .DS_Store
+
+*~
+.ruby-version
+/vendor/bundle
