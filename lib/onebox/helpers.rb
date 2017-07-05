@@ -31,10 +31,10 @@ module Onebox
       end
 
       # Attempt to retrieve the title from the meta tag
-      title_element = doc.at_css('title')
-      if title_element && title_element.text
-        og[:title] ||= title_element.text unless Onebox::Helpers.blank?(title_element.text)
-      end
+      # title_element = doc.at_css('title')
+      # if title_element && title_element.text
+      #   og[:title] ||= title_element.text unless Onebox::Helpers.blank?(title_element.text)
+      # end
 
       og
     end
