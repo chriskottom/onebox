@@ -1,3 +1,7 @@
+require 'money'
+
+I18n.enforce_available_locales = false
+
 module Onebox
   module Engine
     class TheWineSocietyOnebox
@@ -54,10 +58,18 @@ module Onebox
         Onebox::Helpers.truncate(text, MAX_DESCRIPTION_CHARS)
       end
 
-      def price
-        price_node = raw.css('.pnl-buy-pricing').first
-        if price_node
-          price_node.text.strip.gsub(/[^0-9\.]/, '')
+      def price(product_info = {})
+        if product_info[:price_amount] && product_info[:price_currency]
+          cents = product_info[:price_amount].to_f * 100
+          money = Money.new(cents, product_info[:price_currency])
+          money.format
+        else
+          price_node = raw.css('.pnl-buy-pricing').first
+          if price_node
+            price_node.text.strip.sub(/\s.*$/, '')
+          else
+            nil
+          end
         end
       end
 
@@ -70,7 +82,7 @@ module Onebox
           link: link,
           title: og[:title] || title,
           description: description(og[:description]),
-          price: prod[:price_amount] || price
+          price: price(prod)
         }
       end
     end

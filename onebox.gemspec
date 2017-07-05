@@ -25,6 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'htmlentities', '~> 4.3'
   spec.add_runtime_dependency 'fast_blank', '>= 1.0.0'
   spec.add_runtime_dependency 'sanitize'
+  spec.add_runtime_dependency 'money', '~> 6.9'
 
   spec.add_development_dependency 'bundler', '~> 1.7'
   spec.add_development_dependency 'rake', '~> 10.4'

@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'spec_helper'
 
 describe Onebox::Engine::TheWineSocietyOnebox do
@@ -37,7 +38,7 @@ describe Onebox::Engine::TheWineSocietyOnebox do
 
   it 'uses the price from the page' do
     price_node = parsed_html.at_css('p.priceline strong .price')
-    expect(price_node.text).to eq('8.50')
+    expect(price_node.text).to eq('£8.50')
   end
 
   context 'when the product description is long' do
@@ -86,7 +87,7 @@ describe Onebox::Engine::TheWineSocietyOnebox do
 
     it 'uses the price from the page' do
       price_node = parsed_html.at_css('p.priceline strong .price')
-      expect(price_node.text).to eq('6.75')
+      expect(price_node.text).to eq('£6.75')
     end
   end
 end
