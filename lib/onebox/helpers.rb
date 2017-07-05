@@ -39,6 +39,22 @@ module Onebox
       og
     end
 
+    def self.extract_product_info(doc)
+      return {} unless doc
+
+      product_info = {}
+
+      doc.css('meta').each do |m|
+        if (m["property"] && m["property"][/^product:(.+)$/i]) ||
+           (m["name"] && m["name"][/^product:(.+)$/i])
+          value = (m["content"] || m["value"]).to_s
+          product_info[$1.tr('-:','_').to_sym] ||= value unless Onebox::Helpers::blank?(value)
+        end
+      end
+
+      product_info
+    end
+
     def self.fetch_response(location, limit=nil, domain=nil, headers=nil)
 
       limit ||= 5

@@ -70,4 +70,14 @@ RSpec.describe Onebox::Helpers do
     end
   end
 
+  describe 'extract_product_info' do
+    let(:html) { response('thewinesociety') }
+    let(:doc)  { Nokogiri::HTML(html) }
+
+    it 'should extract the product data from the meta tags' do
+      prod_info = Onebox::Helpers.extract_product_info(doc)
+      expect(prod_info[:price_currency]).to eq('GBP')
+      expect(prod_info[:price_amount]).to eq('8.50')
+    end
+  end
 end
