@@ -39,4 +39,20 @@ describe Onebox::Engine::TheWineSocietyOnebox do
     price_node = parsed_html.at_css('p.priceline strong .price')
     expect(price_node.text).to eq('8.50')
   end
+
+  context 'when the product description is long' do
+    let(:link) { 'https://www.thewinesociety.com/shop/ProductDetail.aspx?pd=AU19391' }
+    let(:html) { described_class.new(link).to_html }
+
+    before do
+      fake(link, response('thewinesociety-long-description'))
+    end
+
+    it 'truncates the description' do
+      description_node = parsed_html.at_css('p.description')
+      description = description_node.text
+      expect(description.length).to be <= 300
+      expect(description).to match /\.\.\.$/
+    end
+  end
 end
