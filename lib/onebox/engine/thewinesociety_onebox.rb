@@ -18,14 +18,21 @@ module Onebox
       def image
         product_image = raw.at_css('.pnl-product-image img')
         if product_image
-          product_image[:src]
+          image_url = product_image[:src]
+          if image_url =~ /^http/
+            image_url
+          elsif image_url =~ %r{^\.\./resources/}
+            image_url.sub(/^\.\./, 'http://www.thewinesociety.com')
+          else
+            nil
+          end
         end
       end
 
       def title
         title_node = raw.at_css('h1.productName')
         if title_node
-          title_node.inner_html
+          title_node.text.strip
         end
       end
 
@@ -33,16 +40,25 @@ module Onebox
         if !text
           all_content_node = raw.at_css('.pnl-product-detail-description .allcontent')
           if all_content_node
-            text = all_content_node.inner_html
+            text = all_content_node.text
           else
-            description_node = raw.at_css('.pnl-product-detail-description')
+            description_node = raw.at_css('.pnl-product-detail-description .truncatable')
             if description_node
               text = description_node.text
             end
           end
         end
 
+        text = text.strip
+        text = Sanitize.fragment(text, Sanitize::Config::RELAXED)
         Onebox::Helpers.truncate(text, MAX_DESCRIPTION_CHARS)
+      end
+
+      def price
+        price_node = raw.css('.pnl-buy-pricing').first
+        if price_node
+          price_node.text.strip.gsub(/[^0-9\.]/, '')
+        end
       end
 
       def data
@@ -54,7 +70,7 @@ module Onebox
           link: link,
           title: og[:title] || title,
           description: description(og[:description]),
-          price: prod[:price_amount]
+          price: prod[:price_amount] || price
         }
       end
     end

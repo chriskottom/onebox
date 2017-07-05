@@ -42,7 +42,6 @@ describe Onebox::Engine::TheWineSocietyOnebox do
 
   context 'when the product description is long' do
     let(:link) { 'https://www.thewinesociety.com/shop/ProductDetail.aspx?pd=AU19391' }
-    let(:html) { described_class.new(link).to_html }
 
     before do
       fake(link, response('thewinesociety-long-description'))
@@ -53,6 +52,41 @@ describe Onebox::Engine::TheWineSocietyOnebox do
       description = description_node.text
       expect(description.length).to be <= 300
       expect(description).to match /\.\.\.$/
+    end
+  end
+
+  context 'when no OpenGraph information is present' do
+    let(:link) { 'https://www.thewinesociety.com/shop/ProductDetail.aspx?pd=IT21221' }
+
+    before do
+      fake(link, response('thewinesociety-no-og'))
+    end
+
+    it 'responds based on the relative image URL from the page' do
+      image_node = parsed_html.at_css('img.thumbnail')
+      image_url = 'http://www.thewinesociety.com/resources/product_images/IT21221.jpg'
+      expect(image_node[:src]).to eq(image_url)
+    end
+
+    it 'uses the title from the page header' do
+      title_node = parsed_html.at_css('h3 a')
+      expect(title_node[:href]).to eq(link)
+      expect(title_node.text).to eq('Tarantino Primitivo Segnavento, Pervini 2015')
+    end
+
+    it 'uses the unaltered description from the page' do
+      description_node = parsed_html.at_css('p.description')
+      description = description_node.text
+
+      expected = 'A juicy sappy blackberry-flavoured red from the heart '\
+                 'of primitivo country. Made to be enjoyed in its youth.'
+      expect(description).to eq(expected)
+      expect(description).not_to match(/\.\.\.$/)
+    end
+
+    it 'uses the price from the page' do
+      price_node = parsed_html.at_css('p.priceline strong .price')
+      expect(price_node.text).to eq('6.75')
     end
   end
 end
