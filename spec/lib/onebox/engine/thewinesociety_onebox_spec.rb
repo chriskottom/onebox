@@ -10,12 +10,12 @@ describe Onebox::Engine::TheWineSocietyOnebox do
     fake(link, response('thewinesociety'))
   end
 
-  it 'uses the image from the page' do
+  it 'uses the image from the meta tag' do
     image_node = parsed_html.at_css('img.thumbnail')
     expect(image_node[:src]).to match(%r{resources/product_images/CE8721\.jpg})
   end
 
-  it 'uses the link from the page' do
+  it 'uses the link as supplied by the user' do
     header_node = parsed_html.at_css('header.source a')
     expect(header_node[:href]).to eq(link)
     expect(header_node.text).to eq('thewinesociety.com')
@@ -25,7 +25,7 @@ describe Onebox::Engine::TheWineSocietyOnebox do
     expect(title_node.text).to eq('Concha y Toro Corte Ignacio Casablanca Riesling 2015')
   end
 
-  it 'uses the unaltered description from the page' do
+  it 'uses the unaltered description from the meta tag' do
     description_node = parsed_html.at_css('p.description')
     description = description_node.text
 
@@ -36,14 +36,45 @@ describe Onebox::Engine::TheWineSocietyOnebox do
     expect(description).not_to match(/\.\.\.$/)
   end
 
-  it 'uses the price from the page' do
+  it 'uses the price from the meta tag' do
     price_node = parsed_html.at_css('p.priceline strong .price')
     expect(price_node.text).to eq('£8.50')
+  end
+
+  it 'uses the unit string from the page' do
+    unit_node = parsed_html.at_css('p.priceline .unit')
+    expect(unit_node.text).to eq('per bottle')
   end
 
   it 'uses the last updated date from the meta tag' do
     updated_node = parsed_html.at_css('p.last-updated')
     expect(updated_node.text).to eq('Details correct as at: 05/07/2017 07:17:25')
+  end
+
+  context 'when the units are non-standard' do
+    let(:link) { 'https://www.thewinesociety.com/shop/ProductDetail.aspx?pd=WB80399' }
+
+    before do
+      fake(link, response('thewinesociety-item-unit'))
+    end
+
+    it 'uses "item" as the unit' do
+      unit_node = parsed_html.at_css('p.priceline .unit')
+      expect(unit_node.text).to eq('per item')
+    end
+  end
+
+  context 'when the units are weird' do
+    let(:link) { 'https://www.thewinesociety.com/shop/ProductDetail.aspx?pd=SB997' }
+
+    before do
+      fake(link, response('thewinesociety-weird-unit'))
+    end
+
+    it 'uses "unit" as the unit' do
+      unit_node = parsed_html.at_css('p.priceline .unit')
+      expect(unit_node.text).to eq('per unit')
+    end
   end
 
   context 'when the link is URL encoded' do

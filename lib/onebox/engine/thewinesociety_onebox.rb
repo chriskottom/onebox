@@ -6,6 +6,8 @@ module Onebox
   module Engine
     class TheWineSocietyOnebox
       MAX_DESCRIPTION_CHARS = 300
+      FALLBACK_UNIT = 'unit'
+      WEIRD_UNITS = %w(each)
 
       include Engine
       include LayoutSupport
@@ -77,6 +79,22 @@ module Onebox
         end
       end
 
+      def unit(product_info = nil)
+        if product_info[:category]
+          "per #{ product_info[:category] }"
+        else
+          price_node = raw.css('.pnl-buy-pricing').first
+          if price_node
+            unit_text = price_node.text.sub(/^\S+\s+/, '').strip.downcase
+            unit_text = FALLBACK_UNIT if WEIRD_UNITS.include?(unit_text)
+
+            return "per #{ unit_text }" if !unit_text.empty?
+          end
+        end
+
+        "per #{ FALLBACK_UNIT }"
+      end
+
       def last_updated(timestamp = nil)
         if timestamp
           DateTime.parse(timestamp).strftime('%d/%m/%Y %H:%M:%S')
@@ -95,6 +113,7 @@ module Onebox
           title: og[:title] || title,
           description: description(og[:description]),
           price: price(prod),
+          unit: unit(prod),
           last_updated: last_updated(og[:updated_time])
         }
       end
