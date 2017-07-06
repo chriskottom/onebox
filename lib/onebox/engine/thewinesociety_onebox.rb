@@ -73,6 +73,14 @@ module Onebox
         end
       end
 
+      def last_updated(timestamp = nil)
+        if timestamp
+          DateTime.parse(timestamp).strftime('%d/%m/%Y %H:%M:%S')
+        else
+          DateTime.now.strftime('%d/%m/%Y %H:%M:%S')
+        end
+      end
+
       def data
         og   = ::Onebox::Helpers.extract_opengraph(raw)
         prod = ::Onebox::Helpers.extract_product_info(raw)
@@ -82,7 +90,8 @@ module Onebox
           link: link,
           title: og[:title] || title,
           description: description(og[:description]),
-          price: price(prod)
+          price: price(prod),
+          last_updated: last_updated(og[:updated_time])
         }
       end
     end

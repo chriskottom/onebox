@@ -41,6 +41,11 @@ describe Onebox::Engine::TheWineSocietyOnebox do
     expect(price_node.text).to eq('£8.50')
   end
 
+  it 'uses the last updated date from the meta tag' do
+    updated_node = parsed_html.at_css('p.last-updated')
+    expect(updated_node.text).to eq('Details correct as at: 05/07/2017 07:17:25')
+  end
+
   context 'when the product description is long' do
     let(:link) { 'https://www.thewinesociety.com/shop/ProductDetail.aspx?pd=AU19391' }
 
@@ -60,6 +65,9 @@ describe Onebox::Engine::TheWineSocietyOnebox do
     let(:link) { 'https://www.thewinesociety.com/shop/ProductDetail.aspx?pd=IT21221' }
 
     before do
+      time = DateTime.parse('2017-07-05 12:13:14')
+      allow(DateTime).to receive(:now).and_return(time)
+
       fake(link, response('thewinesociety-no-og'))
     end
 
@@ -88,6 +96,11 @@ describe Onebox::Engine::TheWineSocietyOnebox do
     it 'uses the price from the page' do
       price_node = parsed_html.at_css('p.priceline strong .price')
       expect(price_node.text).to eq('£6.75')
+    end
+
+    it 'uses the current date and time as last updated' do
+      updated_node = parsed_html.at_css('p.last-updated')
+      expect(updated_node.text).to eq('Details correct as at: 05/07/2017 12:13:14')
     end
   end
 end
