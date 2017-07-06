@@ -33,6 +33,10 @@ module Onebox
         end
       end
 
+      def decoded_link
+        HTMLEntities.new.decode(link)
+      end
+
       def title
         title_node = raw.at_css('h1.productName')
         if title_node
@@ -87,7 +91,7 @@ module Onebox
 
         {
           image: og[:image] || image,
-          link: link,
+          link: decoded_link,
           title: og[:title] || title,
           description: description(og[:description]),
           price: price(prod),

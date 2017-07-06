@@ -46,6 +46,18 @@ describe Onebox::Engine::TheWineSocietyOnebox do
     expect(updated_node.text).to eq('Details correct as at: 05/07/2017 07:17:25')
   end
 
+  context 'when the link is URL encoded' do
+    let(:link) { 'https://www.thewinesociety.com/shop/productdetail.aspx?section=pd&pl=&pd=CE8721&prl=STD' }
+
+    it 'decodes it before display' do
+      header_node = parsed_html.at_css('header.source a')
+      expect(header_node[:href]).to eq(link)
+
+      title_node = parsed_html.at_css('h3 a')
+      expect(title_node[:href]).to eq(link)
+    end
+  end
+
   context 'when the product description is long' do
     let(:link) { 'https://www.thewinesociety.com/shop/ProductDetail.aspx?pd=AU19391' }
 
