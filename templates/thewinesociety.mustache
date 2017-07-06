@@ -1,9 +1,30 @@
+<style>
+ aside.onebox.thewinesociety .source {
+   background: url(http://www.thewinesociety.com/images/fb/tws-logo.png) no-repeat;
+   background-size: 16px 16px;
+   padding-left: 20px;
+ }
+ aside.onebox.thewinesociety img.thumbnail { margin-bottom: 8px }
+ aside.onebox.thewinesociety article .product-meta {
+   display: inline-block;
+   margin: 0;
+ }
+ aside.onebox.thewinesociety article .priceline { margin: 0 }
+ aside.onebox.thewinesociety article .last-updated {
+   color: #888;
+   font-size: 0.9em;
+   font-style: italic;
+   margin: 0;
+ }
+</style>
 <img src="{{image}}" class="thumbnail"/>
 
 <h3><a href='{{link}}' target='_blank'>{{title}}</a></h3>
 <p class="description">{{description}}</p>
-<p class="priceline">
-  <strong><span class="price">{{price}}</span></strong>
-  <span class="unit">{{unit}}</span>
-</p>
-<p class="last-updated">Details correct as at: {{last_updated}}</p>
+<div class="product-meta">
+  <p class="priceline">
+    <strong><span class="price">{{price}}</span></strong>
+    <span class="unit">{{unit}}</span>
+  </p>
+  <p class="last-updated">Details correct as at: {{last_updated}}</p>
+</div>
