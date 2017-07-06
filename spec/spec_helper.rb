@@ -19,6 +19,7 @@ RSpec.configure do |config|
     FakeWeb.allow_net_connect = false
   end
   config.include HTMLSpecHelper
+  config.full_backtrace = false
 end
 
 shared_context "engines" do
