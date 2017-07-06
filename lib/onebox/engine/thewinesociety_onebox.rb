@@ -59,8 +59,8 @@ module Onebox
           end
         end
 
-        text = text.strip
-        text = Sanitize.fragment(text, Sanitize::Config::RELAXED)
+        text = HTMLEntities.new.decode(text.strip)
+        text = Sanitize.fragment(text)
         Onebox::Helpers.truncate(text, MAX_DESCRIPTION_CHARS)
       end
 

@@ -51,6 +51,27 @@ describe Onebox::Engine::TheWineSocietyOnebox do
     expect(updated_node.text).to eq('Details correct as at: 05/07/2017 07:17:25')
   end
 
+  context 'when the description contains markup and HTML entity codes' do
+    let(:link) { 'https://www.thewinesociety.com/shop/ProductDetail.aspx?pd=WB80399' }
+
+    before do
+      fake(link, response('thewinesociety-item-unit'))
+    end
+
+    it 'decodes the entities and strips out the tags' do
+      description_node = parsed_html.at_css('p.description')
+      description = description_node.text
+
+      expected = 'Made of stained wood, the wine bin kit comes complete '\
+                 'with instructions and connectors. 8 x 10 openings for a '\
+                 'maximum of 90 bottles. Measures 100.5cm x 91.5cm (39½" '\
+                 'x 36"). Price includes UK delivery.'
+      puts description
+      puts expected
+      expect(description).to eq(expected)
+    end
+  end
+
   context 'when the units are non-standard' do
     let(:link) { 'https://www.thewinesociety.com/shop/ProductDetail.aspx?pd=WB80399' }
 
