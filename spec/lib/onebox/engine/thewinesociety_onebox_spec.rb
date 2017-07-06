@@ -66,8 +66,6 @@ describe Onebox::Engine::TheWineSocietyOnebox do
                  'with instructions and connectors. 8 x 10 openings for a '\
                  'maximum of 90 bottles. Measures 100.5cm x 91.5cm (39½" '\
                  'x 36"). Price includes UK delivery.'
-      puts description
-      puts expected
       expect(description).to eq(expected)
     end
   end
